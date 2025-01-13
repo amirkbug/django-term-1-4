@@ -11,6 +11,7 @@ from django.contrib.auth.models import AbstractUser, AbstractBaseUser, Permissio
 #     def __str__(self):
 #         return self.username
 
+
 class CustomeUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         """
@@ -64,5 +65,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.username
-
-
