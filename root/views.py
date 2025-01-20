@@ -41,6 +41,7 @@ from django.contrib import messages
 #    else:
 #        return render(request,"root/contact.html")
 
+
 def contactus(request):
     if request.method == "POST":
         form =  ContactUsForm(request.POST)

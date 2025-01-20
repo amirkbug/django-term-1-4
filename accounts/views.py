@@ -18,11 +18,12 @@ def login_user(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
+            username = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                print(user.get_user_permissions())
                 return redirect("root:home")
             else:
                 messages.add_message(request, messages.ERROR, "Invalid credintial")
@@ -87,6 +88,12 @@ def change_password(request):
     else:
         return render (request, "registration/change-password.html")
 
+
+from threading import Thread
+
+def send_email(title:str,caption:str,sender:str,receiver:list,fail_silently=True,):
+    send_mail(title,caption,sender,receiver,fail_silently)
+
 def reset_password(request):
     if request.method == "POST":
         form = ResetPassForm(request.POST)
@@ -102,15 +109,25 @@ def reset_password(request):
                 if not create:
                     Token.objects.get(user=user).delete()
                     token = Token.objects.create(user=user)
-                send_mail(
+                tr = Thread(target=send_email,args=(
                     "Reset your password",
                     f"""
                     please click on link for  reset password\n
                     http://127.0.0.1:8000/accounts/reset-password-confirm/{token.key}""",
                     "admin@mysite.com",
                     [user.email],
-                    fail_silently=True,
-                )
+                ))
+                tr.start()
+                
+                # send_mail(
+                #     "Reset your password",
+                #     f"""
+                #     please click on link for  reset password\n
+                #     http://127.0.0.1:8000/accounts/reset-password-confirm/{token.key}""",
+                #     "admin@mysite.com",
+                #     [user.email],
+                #     fail_silently=True,
+                # )
                 return redirect("accounts:reset_password_done")
         else:
             messages.add_message(request, messages.ERROR, "invalid input data")
