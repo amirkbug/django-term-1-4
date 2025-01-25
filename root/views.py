@@ -2,22 +2,34 @@ from django.shortcuts import render
 from .models import Agents, Testimonials
 from services.models import Services, Category
 from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView , RedirectView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-from django.http import HttpResponse
+
+class HomeView(TemplateView):
+    template_name = "root/index.html"
 
 
-#@login_required
-def home(request):
-    agents = Agents.objects.filter(status=True)[:3]
-    services = Services.objects.filter(status=True)[:3]
-    testers = Testimonials.objects.filter(status=True)
-    context = {
-        'services': services,
-        'agents' : agents,
-        'testers' : testers,
-    }
-    return render(request,"root/index.html", context=context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context ['services'] = Services.objects.filter(status=True)[:3]
+        context ['agents'] = Agents.objects.filter(status=True)[:3]
+        context ['testers'] = Testimonials.objects.filter(status=True)
+        return context
+
+
+# @login_required
+# def home(request):
+#     agents = Agents.objects.filter(status=True)[:3]
+#     services = Services.objects.filter(status=True)[:3]
+#     testers = Testimonials.objects.filter(status=True)
+#     context = {
+#         'services': services,
+#         'agents' : agents,
+#         'testers' : testers,
+#     }
+#     return render(request,"root/index.html", context=context)
 
 
 from .models import ContactUs
@@ -57,11 +69,30 @@ def contactus(request):
         context = {'form': form}
         return render(request,"root/contact.html", context=context)
 
+class AboutUsView(TemplateView):
+    template_name = "root/about.html"
 
-def aboutus(request):
-    return render(request,"root/about.html")
 
-def agent(request):
-    #agents = Agents.objects.all()
-    agents = Agents.objects.filter(status=True)
-    return render(request,"root/agents.html", context={"agents":agents} )
+# def aboutus(request):
+#     return render(request,"root/about.html")
+
+
+
+class AgentsView(TemplateView):
+    template_name = "root/agents.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context ['agents'] = Agents.objects.filter(status=True)
+        return context
+
+# def agent(request):
+#     #agents = Agents.objects.all()
+#     agents = Agents.objects.filter(status=True)
+#     return render(request,"root/agents.html", context={"agents":agents} )
+
+
+
+class GoogleView(RedirectView):
+    url = "https://google.com"
