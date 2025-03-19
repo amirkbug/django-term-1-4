@@ -12,4 +12,5 @@ urlpatterns = [
     path("agent", AgentsView.as_view(), name="agent"),
     path("google", GoogleView.as_view(), name="google"),
     path("api", test),
+    
 ]

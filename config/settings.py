@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     "robots",
     "captcha",
     'rest_framework',
+    'django_filters',
+    'drf_yasg',
+    'rest_framework_simplejwt',
     
 ]
 SITE_ID = 1
@@ -145,3 +148,15 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 AUTH_USER_MODEL = "accounts.User"
+
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
