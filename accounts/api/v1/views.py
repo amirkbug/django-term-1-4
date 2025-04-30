@@ -44,7 +44,7 @@ class LogoutApiView(APIView):
         user = request.user
         #user.auth_token.delete()
         return Response(
-            {"message": "logout successfully"},
+            {"message": "lougus successfully"},
             status=status.HTTP_204_NO_CONTENT,
         )
 
