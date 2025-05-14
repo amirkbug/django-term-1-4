@@ -6,6 +6,7 @@ app_name = "services"
 
 urlpatterns = [
     path("", ServicesView.as_view(), name="services"),
+    
     path(
         "category/<str:category>",
         ServicesView.as_view(),
