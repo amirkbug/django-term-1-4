@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "payment",
     "corsheaders",
     'django_celery_results',
+    'django-celery-beat',
 
 ]
 SITE_ID = 1

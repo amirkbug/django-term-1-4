@@ -5,3 +5,10 @@ import time
 def send_mail():
     time.sleep(5)
     print("email sended")
+
+
+
+
+
+def send_adv():
+    print("adv sended")
