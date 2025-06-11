@@ -157,6 +157,27 @@
   <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
   <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
   <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script>
+    $.get( "http://127.0.0.1:8000/services/api/v1/services/", function( data , status ) {
+     services = $("#service-list")
+     for(service of data){
+      services.append(`<div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item  position-relative">
+              <div class="icon">
+                <i class="bi bi-activity"></i>
+              </div>
+              <a href="service-details.html" class="stretched-link">
+                <h3>${service.title}</h3>
+              </a>
+              <p>${service.content}</p>
+            </div>
+          </div>`)
+     }
+      
+    });
+
+  </script>
 
   <!-- Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>

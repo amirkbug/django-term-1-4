@@ -6,6 +6,18 @@ from django.views.generic import TemplateView, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.http import HttpResponse
+import time
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.core.cache import cache
+from .tasks import send_mail
+
+
+@cache_page(60 * 2)
+def test2(request):
+    send_mail.delay()
+    return HttpResponse("<h1>hello world</h1>")
 
 
 class HomeView(LoginRequiredMixin,TemplateView):
@@ -13,7 +25,11 @@ class HomeView(LoginRequiredMixin,TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["services"] = Services.objects.filter(status=True)[:3]
+        services = Services.objects.filter(status=True)[:3]
+        services_cache = cache.get("services")
+        if services_cache is None:
+            cache.set("services" , services , 60 * 2)
+        context["services"] = cache.get("services")
         context["agents"] = Agents.objects.filter(status=True)[:3]
         context["testers"] = Testimonials.objects.filter(status=True)
         return context
@@ -104,6 +120,7 @@ def contactus(request):
         #     return redirect("accounts:login")
 
 
+method_decorator(cache_page(60 * 2),name="dispatch")
 class AboutView(TemplateView):
     template_name = "root/about.html"
 

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path , include
 from .views import (
     contactus,
     AgentsView,
@@ -6,6 +6,7 @@ from .views import (
     AboutView,
     GoogleView,
     test,
+    test2,
 )
 
 
@@ -17,5 +18,7 @@ urlpatterns = [
     path("about", AboutView.as_view(), name="about"),
     path("agent", AgentsView.as_view(), name="agent"),
     path("google", GoogleView.as_view(), name="google"),
+    path("test", test2, name="test2"),
     path("api", test),
+    path("api/v1/", include("root.api.v1.urls")),
 ]

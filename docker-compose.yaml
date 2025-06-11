@@ -9,6 +9,8 @@ services:
      - 8000:8000
     volumes:
      - .:/core
+    depends_on:
+      - redis
   smtp4dev:
     image: rnwood/smtp4dev:v3
     ports:
@@ -21,5 +23,34 @@ services:
       - ServerOptions__Urls=http://*:80
       - ServerOptions__HostName=smtp4dev
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+
+
+  db:
+    image: postgres:14-alpine
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_DB: web
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  worker:
+    build: .
+    command: celery -A config worker -l INFO
+    volumes:
+      - .:/core
+    depends_on:
+      - redis
+      - backend
+
 volumes:
   smtp4dev-data:
+  postgres_data:
