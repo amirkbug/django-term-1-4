@@ -56,6 +56,9 @@ INSTALLED_APPS = [
     "mail_templated",
     "cart",
     "payment",
+    "corsheaders",
+    'django_celery_results',
+    'django_celery_beat',
 ]
 SITE_ID = 1
 
@@ -67,7 +70,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = ["*"]
 
 ROOT_URLCONF = "config.urls"
 
@@ -94,12 +101,34 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'web',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
+
+CELERY_BROKER_URL = "redis://redis:6379/1"
+CELERY_RESULT_BACKEND = "db+postgresql://admin:admin@db:5432/web"
+
+CELERY_BEAT_SCHEDULE = {
+    'send-adv-every-10-seconds': {
+        'task': 'root.tasks.send_adv',  # مسیر کامل تسک (باید register شده باشه)
+        'schedule': 10.0,  # هر ۱۰ ثانیه یک‌بار
+    },
+}
+
 
 
 # Password validation
@@ -119,6 +148,13 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "TIMEOUT" : 120
+    }
+}
 
 
 # Internationalization
